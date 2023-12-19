@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows.Controls;
 
 namespace forumcsharp
@@ -17,37 +17,47 @@ namespace forumcsharp
         {
             
             string[] dataBase;
-            string[] LoginAndPassword;
+            string login
 
             if (LoginTextBox.Text != "" && PasswordTextBox.Password != "")
             {
-                dataBase = File.ReadAllText("database.txt").Split("\n");
-                foreach (var user in dataBase)
-                {
-                    LoginAndPassword = user.Split(" ");
-                    if (LoginAndPassword[0].CompareTo(LoginTextBox.Text) == 0 && LoginAndPassword[1].CompareTo(PasswordTextBox.Password) == 0)
-                    {
-                        Page2 page2 = new Page2(); // Create an instance of Page2
-                        NavigationService.Navigate(page2, LoginAndPassword[0]);
-                        break;
-                    }
-                }
-
+                login = isSignedUp();
+                if(login != null) NavigationService.Navigate(page2, Login);
             }
         }
 
         private void SignUpButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            File.WriteAllText("database.txt", LoginTextBox.Text + " " + PasswordTextBox.Password + "\n");
-            Page2 page2 = new Page2(); // Create an instance of Page2
-            NavigationService.Navigate(page2, LoginTextBox.Text);
+            if (LoginTextBox.Text != "" && PasswordTextBox.Password != "")
+            {
+                login = isSignedUp();
+                if(login == null) 
+                {
+                    File.AppendAllText("database.txt", LoginTextBox.Text + " " + PasswordTextBox.Password + "\n");
+                    Page2 page2 = new Page2(); // Create an instance of Page2
+                    NavigationService.Navigate(page2, LoginTextBox.Text);
+                }
+                else{
+                    PasswordTextBox.Password = "";
+                    
+                }
+            }
         }
 
-        bool isSignedUp(string userName)
+        string isSignedUp()
         {
-            //open file and search for username
-
-            return false;
+            string[] LoginAndPassword;
+            string[] dataBase = File.ReadAllText("database.txt").Split("\n");
+            foreach (var user in dataBase)
+    `       {
+                LoginAndPassword = user.Split(" ");
+                if (LoginAndPassword[0].CompareTo(LoginTextBox.Text) == 0 && LoginAndPassword[1].CompareTo(PasswordTextBox.Password) == 0)
+                {
+                    return LoginAndPassword[0];
+                }
+            }
+            return null;
         }
     }
 }
+
